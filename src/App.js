@@ -1,35 +1,53 @@
+import { clear } from "@testing-library/user-event/dist/clear";
 import axios from "axios";
-import { useEffect, useState } from "react";
-import Flag from "./Flag";
+import { useEffect, useState, useRef } from "react";
 
 function App() {
-  const container = {
-    display: "flex",
-    flexWrap: "wrap",
-    height: "100vh",
-    justifyContent: "center",
+  const [time, setTime] = useState(0);
+  const [timerOn, setTimerOn] = useState(false);
+  const timerId = useRef(0);
+
+
+  const handleStart = () => {
+    setTimerOn((prevValue) => !prevValue);
   };
 
-  const [data, setData] = useState([]);
+  const handleReset = () => {
+    setTime(0);
+    setTimerOn(false);
+  }
+
 
   useEffect(() => {
-    const APICall = async () => {
-      try {
-        const res = await axios.get("https://restcountries.com/v3.1/all");
-        setData(res.data);
-      } catch (error) {
-        console.log("Error fetching data: ", error);
-      }
-    };
+    if (timerOn === true) {
+      timerId.current = setInterval(() => {
+        setTime((prevTime) => prevTime + 1);
+      }, 1000);
+    } else {
+      clearInterval(timerId.current);
+    }
 
-    APICall();
-  }, []);
+    return () => {
+      clearInterval(timerId.current);
+    }
+
+  }, [timerOn]);
+
+  const timeFormatter = (time) => {
+    let minute = Math.floor(time / 60);
+    let second = (time % 60);
+    if(second < 10){
+      second = "0"+second;
+    }
+    return `${minute}:${second}`
+  };
 
   return (
-    <div style={container}>
-      {data.map((value, index) => {
-        return <Flag name={value.name.common} imageURL={value.flags.png} key={value.cca3}/>;
-      })}
+    <div>
+      <h2>Stopwatch</h2>
+      <p>Time: {timeFormatter(time)}</p>
+      <button onClick={handleStart}>{timerOn ? "Stop" : "Start"}</button>
+      <button onClick={handleReset}>Reset</button>
     </div>
   );
 }
