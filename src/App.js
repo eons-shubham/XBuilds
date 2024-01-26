@@ -1,50 +1,23 @@
 import React, { useState } from "react";
 
 function App() {
-  const [first, setfirst] = useState("");
-  const [last, setlast] = useState("");
-  const [showName, setShowName] = useState(false);
+  const [count, setCount] = useState(0);
 
-  const handleClick = (e) => {
-    e.preventDefault();
-    setShowName(true);
+  const handleInc = () => {
+    setCount((prevValue) => prevValue + 1);
+  };
+  const handleDec = () => {
+    setCount((prevValue) => prevValue - 1);
   };
 
   return (
-    <>
-      <form onSubmit={handleClick}>
-        <h1>Full Name Display</h1>
-        <label>First Name:</label>
-        <input
-          type="text"
-          value={first}
-          onChange={(e) => {
-            setfirst(e.target.value);
-          }}
-          required={true}
-        />
-        <br />
-        <label>Last Name:</label>
-        <input
-          type="text"
-          value={last}
-          onChange={(e) => {
-            setlast(e.target.value);
-          }}
-          required={true}
-        />
-        <br />
-        <button type="submit">Submit</button>
-      </form>
-      {showName && (
-        <p>
-          Full Name: {first} {last}
-        </p>
-      )}
-    </>
+    <div>
+      <h2>Counter App</h2>
+      <p>Count: {count}</p>
+      <button onClick={handleInc}>Increment</button>
+      <button onClick={handleDec}>Decrement</button>
+    </div>
   );
 }
 
 export default App;
-
-// Triggering Vercel Build 3
