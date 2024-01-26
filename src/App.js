@@ -1,98 +1,56 @@
-import React from "react";
-import { useState } from "react";
-import * as math from "mathjs";
+import React, { useState } from "react";
 
 function App() {
-  const input = {
-    width: "250px",
-    height: "20px",
-    border: "1px solid black",
-    textAlign: "left",
-    marginBottom: "10px",
-  };
-  const output = {
-    width: "250px",
-    height: "20px",
-    textAlign: "center",
-    marginBottom: "10px",
-    color: "grey",
-  };
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [error, setError] = useState(false);
 
-  const container = {
-    display: "flex",
-    justifyContent: "center",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "250px",
-  };
-
-  const buttonContainer = {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "10px",
-    flexWrap: "wrap",
-    borderRadius: "20px",
-  };
-
-  const buttonItem = {
-    width: "50px",
-    height: "50px",
-    borderRadius: "20%",
-  };
-
-  const [ans, setAns] = useState("");
-  const [expression, setExpression] = useState("");
-  let arr = [
-    "7",
-    "8",
-    "9",
-    "+",
-    "4",
-    "5",
-    "6",
-    "-",
-    "1",
-    "2",
-    "3",
-    "*",
-    "C",
-    "0",
-    "=",
-    "/",
-  ];
-
-  const handleClick = (e) => {
-    if (e.target.tagName === "DIV") return;
-    else if (e.target.innerText !== "=" && e.target.innerText !== "C") {
-      setExpression((prevValue) => prevValue + e.target.innerText);
-    } else if (e.target.innerText === "C") {
-      setAns("");
-      setExpression("");
-    } else if (e.target.innerText === "=") {
-      if (expression === "") setAns("Error");
-      else {
-        setAns(math.evaluate(expression));
-      }
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (username === "user" && password === "password") {
+      setLoggedIn(true);
+      setError(false);
+    } else {
+      setError(true);
     }
   };
 
   return (
-    <div style={container}>
-      <h1>React Calculator</h1>
-      {/* <div style={input}>{expression}</div> */}
-      <input
-        type="text"
-        value={expression}
-        onChange={(e) => setExpression(e.target.value)}
-      />
-      <div style={output}>{ans}</div>
-      <div style={buttonContainer} onClick={handleClick}>
-        {arr.map((item, idx, arr) => {
-          return <button style={buttonItem}>{item}</button>;
-        })}
-      </div>
+    <div>
+      <h1>Login Page</h1>
+      {error && <p>Invalid username or password</p>}
+      {!loggedIn ? (
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="username">Username:</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="username"
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value);
+            }}
+            required
+          />
+          <br />
+          <label htmlFor="password">Password:</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+          <br />
+          <button type="submit">Submit</button>
+        </form>
+      ) : (
+        <p>Welcome, user!</p>
+      )}
     </div>
   );
 }
