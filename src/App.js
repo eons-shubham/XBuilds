@@ -11,12 +11,15 @@ function App() {
   };
 
   return (
-    <div>
-      <h1>Full Name Display</h1>
+    <>
       <form onSubmit={handleClick}>
-        <label htmlFor="firstname">First Name:</label>
+        <h1>Full Name Display</h1>
+
+        <label htmlFor="first">First Name:</label>
         <input
-          id="firstname"
+          id="first"
+          name="first"
+          type="text"
           value={firstname}
           onChange={(e) => {
             setFirstname(e.target.value);
@@ -24,9 +27,11 @@ function App() {
           required={true}
         />
         <br />
-        <label htmlFor="lastname">Last Name:</label>
+        <label htmlFor="last">Last Name:</label>
         <input
-          id="lastname"
+          id="last"
+          name="last"
+          type="text"
           value={lastname}
           onChange={(e) => {
             setLastname(e.target.value);
@@ -34,14 +39,14 @@ function App() {
           required={true}
         />
         <br />
-        <button>Submit</button>
-        {showName && (
-          <p>
-            Full Name: {firstname} {lastname}
-          </p>
-        )}
+        <button type="submit">Submit</button>
       </form>
-    </div>
+      {showName && (
+        <p>
+          Full Name: {firstname} {lastname}
+        </p>
+      )}
+    </>
   );
 }
 
