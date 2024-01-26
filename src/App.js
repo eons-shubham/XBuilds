@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 
 function App() {
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
+  const [first, setfirst] = useState("");
+  const [last, setlast] = useState("");
   const [showName, setShowName] = useState(false);
 
   const handleClick = (e) => {
@@ -14,27 +14,22 @@ function App() {
     <>
       <form onSubmit={handleClick}>
         <h1>Full Name Display</h1>
-
-        <label htmlFor="first">First Name:</label>
+        <label>First Name:</label>
         <input
-          id="first"
-          name="first"
           type="text"
-          value={firstname}
+          value={first}
           onChange={(e) => {
-            setFirstname(e.target.value);
+            setfirst(e.target.value);
           }}
           required={true}
         />
         <br />
-        <label htmlFor="last">Last Name:</label>
+        <label>Last Name:</label>
         <input
-          id="last"
-          name="last"
           type="text"
-          value={lastname}
+          value={last}
           onChange={(e) => {
-            setLastname(e.target.value);
+            setlast(e.target.value);
           }}
           required={true}
         />
@@ -43,7 +38,7 @@ function App() {
       </form>
       {showName && (
         <p>
-          Full Name: {firstname} {lastname}
+          Full Name: {first} {last}
         </p>
       )}
     </>
