@@ -34,7 +34,7 @@ function App() {
           required={true}
         />
         <br />
-        <button onClick={handleClick}>Submit</button>
+        <button>Submit</button>
         {showName && (
           <p>
             Full Name: {firstname} {lastname}
