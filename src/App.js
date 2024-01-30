@@ -1,116 +1,101 @@
-import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
+import React, { useEffect, useState } from "react";
+import "./styles.css";
 
-function App() {
-  const container = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    fontFamily: "arial, sans-serif",
+const SearchBar = ({ onSearch }) => {
+  const [searchValue, setSearchValue] = useState("");
+  const handleSearch = () => {
+    onSearch(searchValue);
   };
+  return (
+    <div className="search-bar">
+      <input
+        type="text"
+        value={searchValue}
+        onChange={(e) => setSearchValue(e.target.value)}
+        placeholder="Enter city name"
+      />
+      <button onClick={handleSearch}>Search</button>
+    </div>
+  );
+};
 
-  const listElement = {
-    width: "100%",
-    backgroundColor: "#009879",
-    border: "none",
-    borderCollapse: "collapse",
-  };
-
-  const heading = {
-    textAlign: "left",
-    color: "white",
-  };
-
-  const pageSection = {
-    backgroundColor: "#009879",
-    padding: "10px",
-    margin: "10px",
-    borderRadius: "5px",
-    color: "white",
-  };
-
-  const buttonCont = {
-    backgroundColor: "#009879",
-    padding: "10px",
-    margin: "10px",
-    borderRadius: "5px",
-    color: "white",
-    border: "none",
-  };
-
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
-  const maxlimit = useRef();
+const WeatherDisplay = ({ city }) => {
+  const [WeatherData, setWeatherData] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    async function API() {
-      try {
-        const res = await axios.get(
-          "https://geektrust.s3-ap-southeast-1.amazonaws.com/adminui-problem/members.json"
-        );
-        setData(res.data);
-        maxlimit.current = Math.ceil(res.data.length / 10);
-      } catch (err) {
-        console.log("Error", err);
-        window.alert("failed to fetch data");
+    if (city) {
+      async function api() {
+        setLoading(true);
+        try {
+          const res = await axios.get(
+            "https://api.weatherapi.com/v1/current.json",
+            {
+              params: {
+                key: "3ed69500b5944503a9271959233011",
+                q: city,
+              },
+            }
+          );
+          setWeatherData(res.data);
+          setLoading(false);
+        } catch (error) {
+          console.log("Error", error);
+          alert("Failed to fetch weather data");
+        }
       }
+
+      api();
     }
-    API();
-  }, []);
+  }, [city]);
 
   return (
-    <div style={container}>
-      <h1>Employee Data Table</h1>
-      <table style={listElement}>
-        <tr style={heading}>
-          <th style={{ padding: "10px" }}>ID</th>
-          <th style={{ padding: "10px" }}>Name</th>
-          <th style={{ padding: "10px" }}>Email</th>
-          <th style={{ padding: "10px" }}>Role</th>
-        </tr>
-        <tbody>
-          {data.slice((page - 1) * 10, page * 10).map((item, index, data) => {
-            return (
-              <tr
-                style={{
-                  backgroundColor: "white",
-                  border: "none",
-                }}
-              >
-                <td style={{ padding: "10px" }}>{item.id}</td>
-                <td style={{ padding: "10px" }}>{item.name}</td>
-                <td style={{ padding: "10px" }}>{item.email}</td>
-                <td style={{ padding: "10px" }}>{item.role}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-        <div style={{ height: "3px", backgroundColor: "#009879" }} />
-      </table>
-      <div>
-        <button
-          onClick={() =>
-            setPage((prev) => {
-              return Math.max(1, prev - 1);
-            })
-          }
-          style={buttonCont}
-        >
-          Previous
-        </button>
-        <span style={pageSection}>{page}</span>
-        <button
-          onClick={() =>
-            setPage((prev) => {
-              const nextPage = prev + 1;
-              return nextPage <= maxlimit.current ? nextPage : prev;
-            })
-          }
-          style={buttonCont}
-        >
-          Next
-        </button>
-      </div>
+    <div className="weather-display">
+      {loading && <p>Loading data...</p>}
+      {!loading && WeatherData && (
+        <div className="weather-cards">
+          <WeatherCard
+            title="Temperature"
+            value={`${WeatherData.current.temp_c}°C`}
+          />
+          <WeatherCard
+            title="Humidity"
+            value={`${WeatherData.current.humidity}%`}
+          />
+          <WeatherCard
+            title="Condition"
+            value={`${WeatherData.current.condition.text}`}
+          />
+          <WeatherCard
+            title="Wind Speed"
+            value={`${WeatherData.current.wind_kph} kph`}
+          />
+        </div>
+      )}
+    </div>
+  );
+};
+
+const WeatherCard = ({ title, value }) => {
+  return (
+    <div className="weather-card">
+      <h3>{title}</h3>
+      <p>{value}</p>
+    </div>
+  );
+};
+
+function App() {
+  const [city, setCity] = useState("");
+  const handleSearch = (searchCity) => {
+    setCity(searchCity);
+  };
+
+  return (
+    <div>
+      <SearchBar onSearch={handleSearch} />
+      <WeatherDisplay city={city} />
     </div>
   );
 }
