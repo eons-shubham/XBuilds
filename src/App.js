@@ -1,101 +1,45 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import "./styles.css";
-
-const SearchBar = ({ onSearch }) => {
-  const [searchValue, setSearchValue] = useState("");
-  const handleSearch = () => {
-    onSearch(searchValue);
-  };
-  return (
-    <div className="search-bar">
-      <input
-        type="text"
-        value={searchValue}
-        onChange={(e) => setSearchValue(e.target.value)}
-        placeholder="Enter city name"
-      />
-      <button onClick={handleSearch}>Search</button>
-    </div>
-  );
-};
-
-const WeatherDisplay = ({ city }) => {
-  const [WeatherData, setWeatherData] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (city) {
-      async function api() {
-        setLoading(true);
-        try {
-          const res = await axios.get(
-            "https://api.weatherapi.com/v1/current.json",
-            {
-              params: {
-                key: "3ed69500b5944503a9271959233011",
-                q: city,
-              },
-            }
-          );
-          setWeatherData(res.data);
-          setLoading(false);
-        } catch (error) {
-          console.log("Error", error);
-          alert("Failed to fetch weather data");
-        }
-      }
-
-      api();
-    }
-  }, [city]);
-
-  return (
-    <div className="weather-display">
-      {loading && <p>Loading data...</p>}
-      {!loading && WeatherData && (
-        <div className="weather-cards">
-          <WeatherCard
-            title="Temperature"
-            value={`${WeatherData.current.temp_c}°C`}
-          />
-          <WeatherCard
-            title="Humidity"
-            value={`${WeatherData.current.humidity}%`}
-          />
-          <WeatherCard
-            title="Condition"
-            value={`${WeatherData.current.condition.text}`}
-          />
-          <WeatherCard
-            title="Wind Speed"
-            value={`${WeatherData.current.wind_kph} kph`}
-          />
-        </div>
-      )}
-    </div>
-  );
-};
-
-const WeatherCard = ({ title, value }) => {
-  return (
-    <div className="weather-card">
-      <h3>{title}</h3>
-      <p>{value}</p>
-    </div>
-  );
-};
+import React, { useState } from "react";
 
 function App() {
-  const [city, setCity] = useState("");
-  const handleSearch = (searchCity) => {
-    setCity(searchCity);
-  };
+  const [text, setText] = useState("");
+  const [suggest, setSuggest] = useState("");
 
+  const handleInputChange = (e) => {
+    const curr = e.target.value;
+    setText(e.target.value);
+
+    const customDictionary = {
+      teh: "the",
+      wrok: "work",
+      fot: "for",
+      exampl: "example",
+    };
+
+    const incorrect = curr.split(" ");
+    const correct = incorrect.map((item, index, incorrect) => {
+      return customDictionary[item.toLowerCase()] || item;
+    });
+
+    const firstCorrection = correct.find(
+      (item, index, correct) => item !== incorrect[index]
+    );
+    setSuggest(firstCorrection || "");
+  };
   return (
     <div>
-      <SearchBar onSearch={handleSearch} />
-      <WeatherDisplay city={city} />
+      <h1>Spell Check and Auto-Correction</h1>
+      <textarea
+        rows={5}
+        cols={40}
+        placeholder="Enter text..."
+        value={text}
+        onChange={handleInputChange}
+      />
+      {suggest && (
+        <p>
+          Did you mean: <strong>{suggest}?</strong>
+        </p>
+      )}
     </div>
   );
 }
