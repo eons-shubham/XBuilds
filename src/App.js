@@ -1,45 +1,43 @@
-import React, { useState } from "react";
+import React from "react";
+import { useState } from "react";
 
 function App() {
-  const [text, setText] = useState("");
-  const [suggest, setSuggest] = useState("");
+  const [keyword, setKeyword] = useState("");
+  const [meaning, setMeaning] = useState("");
 
-  const handleInputChange = (e) => {
-    const curr = e.target.value;
-    setText(e.target.value);
+  const dict = [
+    {
+      word: "React",
+      meaning: "A JavaScript library for building user interfaces.",
+    },
+    { word: "Component", meaning: "A reusable building block in React." },
+    { word: "State", meaning: "An object that stores data for a component." },
+  ];
 
-    const customDictionary = {
-      teh: "the",
-      wrok: "work",
-      fot: "for",
-      exampl: "example",
-    };
-
-    const incorrect = curr.split(" ");
-    const correct = incorrect.map((item, index, incorrect) => {
-      return customDictionary[item.toLowerCase()] || item;
-    });
-
-    const firstCorrection = correct.find(
-      (item, index, correct) => item !== incorrect[index]
-    );
-    setSuggest(firstCorrection || "");
+  const handleClick = (e) => {
+    let foundMeaning = "";
+    for (let i = 0; i < dict.length; i++) {
+      if (dict[i].word.toLowerCase() === keyword.toLowerCase()) {
+        foundMeaning = dict[i].meaning;
+        setMeaning(dict[i].meaning);
+      }
+    }
+    if (foundMeaning === "") {
+      setMeaning("Word not found in the dictionary.");
+    }
   };
+
   return (
     <div>
-      <h1>Spell Check and Auto-Correction</h1>
-      <textarea
-        rows={5}
-        cols={40}
-        placeholder="Enter text..."
-        value={text}
-        onChange={handleInputChange}
+      <h1>Dictionary App</h1>
+      <input
+        type="text"
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
       />
-      {suggest && (
-        <p>
-          Did you mean: <strong>{suggest}?</strong>
-        </p>
-      )}
+      <button onClick={handleClick}>Search</button>
+      <h3>Definition:</h3>
+      {meaning && <p>{meaning}</p>}
     </div>
   );
 }
