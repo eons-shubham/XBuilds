@@ -2,42 +2,53 @@ import React from "react";
 import { useState } from "react";
 
 function App() {
-  const [keyword, setKeyword] = useState("");
-  const [meaning, setMeaning] = useState("");
+  const [data, setData] = useState([
+    { date: "2022-09-01", views: 100, article: "Article 1" },
+    { date: "2023-09-01", views: 100, article: "Article 1" },
+    { date: "2023-09-02", views: 150, article: "Article 2" },
+    { date: "2023-09-02", views: 120, article: "Article 3" },
+    { date: "2020-09-03", views: 200, article: "Article 4" },
+  ]);
 
-  const dict = [
-    {
-      word: "React",
-      meaning: "A JavaScript library for building user interfaces.",
-    },
-    { word: "Component", meaning: "A reusable building block in React." },
-    { word: "State", meaning: "An object that stores data for a component." },
-  ];
+  const handleSortByDate = () => {
+    setData(
+      [...data].sort((a, b) => {
+        return new Date(b.date) - new Date(a.date);
+      })
+    );
+  };
 
-  const handleClick = (e) => {
-    let foundMeaning = "";
-    for (let i = 0; i < dict.length; i++) {
-      if (dict[i].word.toLowerCase() === keyword.toLowerCase()) {
-        foundMeaning = dict[i].meaning;
-        setMeaning(dict[i].meaning);
-      }
-    }
-    if (foundMeaning === "") {
-      setMeaning("Word not found in the dictionary.");
-    }
+  const handleSortByView = () => {
+    setData(
+      [...data].sort((a, b) => {
+        return b.views - a.views;
+      })
+    );
   };
 
   return (
     <div>
-      <h1>Dictionary App</h1>
-      <input
-        type="text"
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
-      />
-      <button onClick={handleClick}>Search</button>
-      <h3>Definition:</h3>
-      {meaning && <p>{meaning}</p>}
+      <h1>Date and Views Table</h1>
+      <button onClick={handleSortByDate}>Sort by Date</button>
+      <button onClick={handleSortByView}>Sort by Views</button>
+      <table>
+        <tr>
+          <th>Date</th>
+          <th>Views</th>
+          <th>Article</th>
+        </tr>
+        <tbody>
+          {data.map((item, index, data) => {
+            return (
+              <tr>
+                <td>{item.date}</td>
+                <td>{item.views}</td>
+                <td>{item.article}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }
