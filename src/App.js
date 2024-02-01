@@ -1,54 +1,107 @@
 import React from "react";
 import { useState } from "react";
+import "./styles.css";
 
 function App() {
-  const [data, setData] = useState([
-    { date: "2022-09-01", views: 100, article: "Article 1" },
-    { date: "2023-09-01", views: 100, article: "Article 1" },
-    { date: "2023-09-02", views: 150, article: "Article 2" },
-    { date: "2023-09-02", views: 120, article: "Article 3" },
-    { date: "2020-09-03", views: 200, article: "Article 4" },
-  ]);
+  const [modalshow, setmodalshow] = useState(false);
 
-  const handleSortByDate = () => {
-    setData(
-      [...data].sort((a, b) => {
-        return new Date(b.date) - new Date(a.date);
-      })
-    );
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    pno: "",
+    date: "",
+  });
+  const handleClick = () => {
+    setmodalshow(true);
   };
 
-  const handleSortByView = () => {
-    setData(
-      [...data].sort((a, b) => {
-        return b.views - a.views;
-      })
-    );
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (new Date(profile.date) > new Date()) {
+      alert("Invalid date of birth. Date of birth cannot be in the future.");
+    } else if (profile.pno.length < 10) {
+      alert("Invalid phone number. Please enter a 10-digit phone number.");
+    } else {
+      setProfile({
+        name: "",
+        email: "",
+        pno: "",
+        date: "",
+      });
+    }
+  };
+
+  const handleChange = (e) => {
+    setProfile({
+      ...profile,
+      [e.target.name]: e.target.value,
+    });
+    console.log(profile);
+  };
+
+  const test = (e) => {
+    console.log(e.target.className);
+    if (e.target.className === "modal-content") {
+      setmodalshow(false);
+    }
   };
 
   return (
-    <div>
-      <h1>Date and Views Table</h1>
-      <button onClick={handleSortByDate}>Sort by Date</button>
-      <button onClick={handleSortByView}>Sort by Views</button>
-      <table>
-        <tr>
-          <th>Date</th>
-          <th>Views</th>
-          <th>Article</th>
-        </tr>
-        <tbody>
-          {data.map((item, index, data) => {
-            return (
-              <tr>
-                <td>{item.date}</td>
-                <td>{item.views}</td>
-                <td>{item.article}</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+    <div className="container">
+      <h1>User Details Modal</h1>
+      <button className="button" onClick={handleClick}>
+        Open Form
+      </button>
+      {modalshow && (
+        <div className="modal" onClick={test}>
+          <div className="modal-content">
+            <form onSubmit={handleSubmit} className="inside">
+              <h1>Fill Details</h1>
+              <h2>Username:</h2>
+              <input
+                id="username"
+                type="text"
+                value={profile.name}
+                onChange={handleChange}
+                name="name"
+                required
+              />
+
+              <h2>Email Address:</h2>
+              <input
+                id="email"
+                type="email"
+                value={profile.email}
+                onChange={handleChange}
+                name="email"
+                required
+              />
+
+              <h2>Phone Number:</h2>
+              <input
+                id="phone"
+                type="tel"
+                value={profile.pno}
+                onChange={handleChange}
+                name="pno"
+                required
+              />
+
+              <h2>Date of Birth:</h2>
+              <input
+                id="dob"
+                type="date"
+                value={profile.date}
+                onChange={handleChange}
+                name="date"
+                required
+              />
+
+              <button className="submit-button">Submit</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
